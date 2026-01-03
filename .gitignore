@@ -28,5 +28,10 @@ dist-ssr
 .env.local
 .env.production
 
+# Passwords & Secrets
+database_password.txt
+*.secret
+*.key
+
 # Netlify
 .netlify
