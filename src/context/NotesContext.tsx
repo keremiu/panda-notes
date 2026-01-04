@@ -136,10 +136,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
         setNotes(prev => [newNote, ...prev.filter(n => n.id !== newNote.id)]);
         
         // 🔔 Yeni not eklendiğinde bildirim gönder
-        const notTitle = noteData.title || 'Yeni Not';
+        // Etiket varsa etiketleri, yoksa başlığı göster
+        const notInfo = noteData.tags && noteData.tags.length > 0
+          ? `🏷️ ${noteData.tags.join(', ')}`
+          : noteData.title || 'Yeni Not';
         sendPushNotification(
           '🐼 Yeni Not Eklendi!',
-          notTitle
+          notInfo
         );
       }
     } catch (e) {
@@ -169,10 +172,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
       );
 
       // 🔔 Not güncellendiğinde bildirim gönder
-      const notTitle = noteData.title || 'Bir Not';
+      // Etiket varsa etiketleri, yoksa başlığı göster
+      const notInfo = noteData.tags && noteData.tags.length > 0
+        ? `🏷️ ${noteData.tags.join(', ')}`
+        : noteData.title || 'Bir Not';
       sendPushNotification(
         '✏️ Not Güncellendi!',
-        notTitle
+        notInfo
       );
     } catch (e) {
       console.error('Not güncellenirken hata:', e);
