@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { NotesProvider } from './context/NotesContext';
 import NotesListScreen from './screens/NotesListScreen';
@@ -6,10 +6,22 @@ import NoteDetailScreen from './screens/NoteDetailScreen';
 import TagsScreen from './screens/TagsScreen';
 import TasksScreen from './screens/TasksScreen';
 import PandaSplash from './components/PandaSplash';
+import { initOneSignal } from './lib/notifications';
 import './App.css';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
+
+  // OneSignal'ı başlat
+  useEffect(() => {
+    // Splash bittikten sonra bildirim izni iste
+    if (!showSplash) {
+      const timer = setTimeout(() => {
+        initOneSignal();
+      }, 2000); // 2 saniye bekle sonra sor
+      return () => clearTimeout(timer);
+    }
+  }, [showSplash]);
 
   const handleSplashComplete = () => {
     setShowSplash(false);
