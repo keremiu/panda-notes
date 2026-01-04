@@ -167,6 +167,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
             : note
         )
       );
+
+      // 🔔 Not güncellendiğinde bildirim gönder
+      const notTitle = noteData.title || 'Bir Not';
+      sendPushNotification(
+        '✏️ Not Güncellendi!',
+        notTitle
+      );
     } catch (e) {
       console.error('Not güncellenirken hata:', e);
     }
