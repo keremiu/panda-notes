@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Note, Tag } from '../types';
 import { supabase, DbNote } from '../lib/supabase';
+import { sendPushNotification } from '../lib/notifications';
 
 interface NotesContextType {
   notes: Note[];
@@ -133,6 +134,13 @@ export function NotesProvider({ children }: { children: ReactNode }) {
       if (data) {
         const newNote = dbToNote(data);
         setNotes(prev => [newNote, ...prev.filter(n => n.id !== newNote.id)]);
+        
+        // 🔔 Yeni not eklendiğinde bildirim gönder
+        const notTitle = noteData.title || 'Yeni Not';
+        sendPushNotification(
+          '🐼 Yeni Not Eklendi!',
+          notTitle
+        );
       }
     } catch (e) {
       console.error('Not eklenirken hata:', e);

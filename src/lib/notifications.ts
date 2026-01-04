@@ -1,6 +1,3 @@
-// OneSignal App ID
-const ONESIGNAL_APP_ID = '4778b65c-8b4b-433c-b6e1-95c5aa83c23f';
-
 // OneSignal'ı başlat ve izin iste
 export const initOneSignal = async () => {
   try {
@@ -14,31 +11,29 @@ export const initOneSignal = async () => {
   }
 };
 
-// Bildirim göster (yerel bildirim - basit yöntem)
-export const showLocalNotification = (title: string, body: string) => {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(title, {
-      body,
-      icon: '/panda.jpg',
-      badge: '/panda.jpg',
+// Tüm kullanıcılara push notification gönder
+export const sendPushNotification = async (title: string, message: string) => {
+  try {
+    const response = await fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title, message }),
     });
-  }
-};
 
-// Bildirim izni iste
-export const requestNotificationPermission = async () => {
-  if ('Notification' in window) {
-    const permission = await Notification.requestPermission();
-    return permission === 'granted';
-  }
-  return false;
-};
+    const data = await response.json();
+    
+    if (!response.ok) {
+      console.error('Notification error:', data);
+      return false;
+    }
 
-// OneSignal üzerinden tüm kullanıcılara bildirim gönder
-// NOT: Bu fonksiyon REST API Key gerektirir (güvenlik için backend'de olmalı)
-// Şimdilik Supabase Edge Function ile yapacağız
-export const sendPushToAll = async (title: string, message: string) => {
-  // Bu fonksiyon Supabase Edge Function'dan çağrılacak
-  console.log('Push notification gönderilecek:', title, message);
+    console.log('Notification sent:', data);
+    return true;
+  } catch (error) {
+    console.error('Failed to send notification:', error);
+    return false;
+  }
 };
 
